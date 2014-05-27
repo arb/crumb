@@ -27,13 +27,12 @@ describe('Crumb', function () {
             views: {
                 path: __dirname + '/templates',
                 engines: {
-                    html: 'handlebars'
+                    html: require('handlebars')
                 }
             }
         };
 
         var server = new Hapi.Server(options);
-
         server.route([
             {
                 method: 'GET', path: '/1', handler: function (request, reply) {
@@ -94,10 +93,9 @@ describe('Crumb', function () {
                     return reply('valid');
                 }
             }
-
         ]);
 
-        server.pack.require('../', { restful: true, cookieOptions: { isSecure: true } }, function (err) {
+        server.pack.register({ plugin: require('../'), options: { restful: true, cookieOptions: { isSecure: true } } }, function (err) {
 
             expect(err).to.not.exist;
             server.inject({ method: 'GET', url: '/1' }, function (res) {
